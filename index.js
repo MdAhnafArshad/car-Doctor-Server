@@ -52,13 +52,15 @@ async function run() {
 
 
 
-     // all operations are bottom side.
-     const database = client.db("carDoctor").collection("services"); 
+     // database and collection names
+     const servicesCollection = client.db("carDoctor").collection("services"); 
+     const bookingCollection = client.db("carDoctor").collection("booking");
+
 
 
     //  all data find 
      app.get("/services", async(req, res)=> {
-         const cursor = database.find();
+         const cursor = servicesCollection.find();
          const result = await cursor.toArray();
          console.log(result);
          res.send(result);
@@ -76,7 +78,17 @@ async function run() {
             projection: { title: 1, price: 1, service_id: 1 },
           };
 
-        const result = await database.findOne(query, options);
+        const result = await servicesCollection.findOne(query, options);
+        res.send(result);
+
+     })
+
+
+     // create a new service
+     app.post('/booking/', async(req, res) => {
+        const booking = req.body;
+        console.log(booking);
+        const result = await bookingCollection.insertOne(booking);
         res.send(result);
 
      })
