@@ -46,6 +46,19 @@ const client = new MongoClient(uri, {
   }
 });
 
+
+//  jwt verify function
+const verifyJWT = (req, res, next) => {
+  console.log('heating verify jwt function');
+  console.log("53",req.headers.authorization);
+  const authorization = req.headers.authorization;
+  
+  if(!authorization){
+    return res.status(401).send({error:true, massage: 'unauthorized access'});
+  }
+}
+
+
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
@@ -106,9 +119,10 @@ async function run() {
 
 
     // sum data get
-    // bookings route
-    app.get('/booking/', async (req, res) => {
-      console.log(req.query.email);
+    // bookings route specific user data 
+    //after with jwt token
+    app.get('/booking/', verifyJWT, async(req, res) => {
+      console.log("121",req.headers);
       let query = {};
       if (req.query.email) {
         query = { email: req.query.email }
@@ -117,6 +131,21 @@ async function run() {
       res.send(result);
     })
 
+
+
+    // ****************************************************************
+    // **************before without jwt token**************************
+    // app.get('/booking/', async (req, res) => {
+    //   console.log(req.query.email);
+    //   let query = {};
+    //   if (req.query.email) {
+    //     query = { email: req.query.email }
+    //   }
+    //   const result = await bookingCollection.find(query).toArray();
+    //   res.send(result);
+    // })
+    // ****************************************************************
+    // ****************************************************************
 
 
     // create a new service
