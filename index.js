@@ -56,6 +56,15 @@ const verifyJWT = (req, res, next) => {
   if(!authorization){
     return res.status(401).send({error:true, massage: 'unauthorized access'});
   }
+  const token = authorization.split(' ')[1];
+  console.log("60 inside token verify jwt", token);
+  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (error, decoded)=>{
+    if(error){
+      return res.status(403).send({error: true, message: "unAuthorize access token"});
+    }
+    req.decoded = decoded;
+    next();
+  });
 }
 
 
@@ -123,6 +132,7 @@ async function run() {
     //after with jwt token
     app.get('/booking/', verifyJWT, async(req, res) => {
       console.log("121",req.headers);
+      console.log('135 came back after verify jwt');
       let query = {};
       if (req.query.email) {
         query = { email: req.query.email }
