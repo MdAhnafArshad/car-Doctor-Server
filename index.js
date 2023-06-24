@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv')
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const { application } = require('express');
@@ -58,11 +59,29 @@ async function run() {
 
 
 
+    // jwt
+    app.post('/jwt', (req, res)=>{
+      const user = req.body
+      console.log(user);
+      const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' });
+      console.log(token);
+      res.send({token});
+    })
+
+
+
+
+
     //  all data find 
+    // services routes.
     app.get("/services", async (req, res) => {
       const cursor = servicesCollection.find();
       const result = await cursor.toArray();
       res.send(result);
+
+      // count the request property names with array.
+      // const myArray = Object.keys(req)
+      // console.log(myArray.length);
     })
 
 
@@ -83,7 +102,11 @@ async function run() {
     })
 
 
+
+
+
     // sum data get
+    // bookings route
     app.get('/booking/', async (req, res) => {
       console.log(req.query.email);
       let query = {};
@@ -130,6 +153,12 @@ async function run() {
       const result = await bookingCollection.updateOne(filter, updateDoc)
       res.send(result);
     })
+
+
+
+
+
+
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });

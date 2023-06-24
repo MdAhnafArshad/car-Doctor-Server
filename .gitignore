@@ -1,3 +1,5 @@
 node_modules
 .env
 .vercel
+
+# require('crypto').randomBytes(64).toString(hex)
